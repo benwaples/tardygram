@@ -21,5 +21,23 @@ describe('tardygram routes', () => {
       email: 'ben@ben.com'
     });
   });
+
+  it('sets authorization for a user based on email via POST', async() => {
+    const response = await request(app)
+      .post('/api/v1/auth/signup')
+      .send({
+        email: 'ben@ben.com',
+        password: 'password'
+      });
+
+    const foundUser = await request(app)
+      .post('/api/v1/auth/login')
+      .send({
+        email: 'ben@ben.com',
+        password: 'password'
+      });
+
+    expect(foundUser.body).toEqual(response.body);
+  });
 });
  
