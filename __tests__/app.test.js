@@ -8,8 +8,18 @@ describe('tardygram routes', () => {
     return pool.query(fs.readFileSync('./sql/setup.sql', 'utf-8'));
   });
 
-  it('should test my patience', () => {
+  it('sign up a user via POST', async() => {
+    const response = await request(app)
+      .post('/api/v1/auth/signup')
+      .send({
+        email: 'ben@ben.com',
+        password: 'password'
+      });
 
+    expect(response.body).toEqual({
+      id: expect.any(String),
+      email: 'ben@ben.com'
+    });
   });
 });
  
