@@ -38,8 +38,10 @@ describe('tardygram post gram route', () => {
       .then(post => expect(post.body).toEqual({ status: 500, message: 'jwt must be provided' }));
   });
 
-  it('should get all posts ia GET', async() => {
-    
+  it('should get all posts via GET', async() => {
+    return await request(app)
+      .get('/api/v1/posts')
+      .then(posts => expect(posts.body.length).toEqual(5));
   });
 });
 
