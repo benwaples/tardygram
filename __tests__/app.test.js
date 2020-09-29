@@ -1,12 +1,8 @@
-const fs = require('fs');
-const pool = require('../lib/utils/pool');
+require('../lib/data/data-helper');
 const request = require('supertest');
 const app = require('../lib/app');
 
-describe.only('tardygram post gram route', () => {
-  beforeEach(() => {
-    return pool.query(fs.readFileSync('./sql/setup.sql', 'utf-8'));
-  });
+describe('tardygram post gram route', () => {
 
   it('should insert a gram if user is authorized via POST', async() => {
     const agent = request.agent(app);
@@ -24,20 +20,29 @@ describe.only('tardygram post gram route', () => {
     };
 
     return await agent
-      .post('/api/v1/grams')
+      .post('/api/v1/posts')
       .send({
         caption: 'I love cranberry',
         tags: ['spicy', 'hot', 'tasty']
       })
       .then(post => expect(post.body).toEqual({ ...placeHolder, id: expect.any(String) }));
+  });
 
+  it('should not let a user post if they are not authorized via POST', async() => {
+
+    return await request(app)
+      .post('/api/v1/posts')
+      .send({
+        caption: 'I love cranberry',
+        tags: ['spicy', 'hot', 'tasty']
+      })
+      .then(post => expect(post.body).toEqual({ status: 500, message: 'jwt must be provided' }));
+    
   });
 });
 
 describe('tardygram auth routes', () => {
-  beforeEach(() => {
-    return pool.query(fs.readFileSync('./sql/setup.sql', 'utf-8'));
-  });
+  
 
   it('sign up a user via POST', async() => {
     const response = await request(app)
