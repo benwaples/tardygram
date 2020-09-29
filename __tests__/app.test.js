@@ -29,7 +29,6 @@ describe('tardygram post gram route', () => {
   });
 
   it('should not let a user post if they are not authorized via POST', async() => {
-
     return await request(app)
       .post('/api/v1/posts')
       .send({
@@ -37,6 +36,9 @@ describe('tardygram post gram route', () => {
         tags: ['spicy', 'hot', 'tasty']
       })
       .then(post => expect(post.body).toEqual({ status: 500, message: 'jwt must be provided' }));
+  });
+
+  it('should get all posts ia GET', async() => {
     
   });
 });
