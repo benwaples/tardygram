@@ -25,7 +25,7 @@ describe('tardygram post gram route', () => {
         caption: 'I love cranberry',
         tags: ['spicy', 'hot', 'tasty']
       })
-      .then(post => expect(post.body).toEqual({ ...placeHolder, id: expect.any(String) }));
+      .then(post => expect(post.body).toEqual({ ...placeHolder, userId: expect.any(Number), id: expect.any(String) }));
   });
 
   it('should not let a user post if they are not authorized via POST', async() => {
