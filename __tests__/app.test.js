@@ -3,7 +3,38 @@ const pool = require('../lib/utils/pool');
 const request = require('supertest');
 const app = require('../lib/app');
 
-describe('tardygram routes', () => {
+describe.only('tardygram post gram route', () => {
+  beforeEach(() => {
+    return pool.query(fs.readFileSync('./sql/setup.sql', 'utf-8'));
+  });
+
+  it('should insert a gram if user is authorized via POST', async() => {
+    const agent = request.agent(app);
+    await agent
+      .post('/api/v1/auth/signup')
+      .send({
+        email: 'ben@ben.com',
+        password: 'password'
+      });
+    
+    const placeHolder = {
+      userId: 1,
+      caption: 'I love cranberry',
+      tags: ['spicy', 'hot', 'tasty']
+    };
+
+    return await agent
+      .post('/api/v1/grams')
+      .send({
+        caption: 'I love cranberry',
+        tags: ['spicy', 'hot', 'tasty']
+      })
+      .then(post => expect(post.body).toEqual({ ...placeHolder, id: expect.any(String) }));
+
+  });
+});
+
+describe('tardygram auth routes', () => {
   beforeEach(() => {
     return pool.query(fs.readFileSync('./sql/setup.sql', 'utf-8'));
   });
@@ -42,7 +73,7 @@ describe('tardygram routes', () => {
 
   it('should verify a user via GET', async() => {
     const agent = request.agent(app);
-    const signIn = await agent
+    await agent
       .post('/api/v1/auth/signup')
       .send({
         email: 'ben@ben.com',
