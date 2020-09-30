@@ -74,6 +74,23 @@ describe('tardygram post gram route', () => {
         tags: expect.any(Array),
       }));
   });
+
+  it('should delete a users gram by id via DELETE', async() => {
+    
+    const { body } = await getAgent()
+      .post('/api/v1/posts')
+      .send({
+        userId: 1,
+        photoUrl: 'blah blah',
+        caption: 'beginning caption',
+        tags: ['run this town', 'how about it']
+      });
+    
+    return getAgent()
+      .delete(`/api/v1/posts/${body.id}`)
+      .send({ userId: body.userId })
+      .then(res => expect(res.body).toEqual(body));
+  });
 });
 
 describe('tardygram auth routes', () => {
