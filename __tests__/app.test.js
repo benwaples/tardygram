@@ -1,10 +1,10 @@
 require('../lib/data/data-helper');
+const { getAgent } = require('../lib/data/data-helper');
 const request = require('supertest');
 const app = require('../lib/app');
 const Gram = require('../lib/models/gram');
 
 describe('tardygram post gram route', () => {
-
   it('should insert a gram if user is authorized via POST', async() => {
     const agent = request.agent(app);
     await agent
@@ -15,18 +15,15 @@ describe('tardygram post gram route', () => {
       });
     
     const placeHolder = {
-      userId: 1,
+      photoUrl: 'aurlto the photo', 
       caption: 'I love cranberry',
       tags: ['spicy', 'hot', 'tasty']
     };
 
     return await agent
       .post('/api/v1/posts')
-      .send({
-        caption: 'I love cranberry',
-        tags: ['spicy', 'hot', 'tasty']
-      })
-      .then(post => expect(post.body).toEqual({ ...placeHolder, userId: expect.any(Number), id: expect.any(String) }));
+      .send(placeHolder)
+      .then(post => expect(post.body).toEqual({ ...placeHolder, id: expect.any(String), userId: expect.any(Number) }));
   });
 
   it('should not let a user post if they are not authorized via POST', async() => {
@@ -51,11 +48,35 @@ describe('tardygram post gram route', () => {
       .get(`/api/v1/posts/${firstPost.id}`)
       .then(res => expect(res.body).toEqual({ id: expect.any(String), caption: firstPost.caption, tags: firstPost.tags, username: expect.any(String) }));
   });
+
+  it('should allow a user to update their caption via PATCH', async() => {
+  
+    const { body } = await getAgent()
+      .post('/api/v1/posts')
+      .send({
+        userId: 1,
+        photoUrl: 'blah blah',
+        caption: 'beginning caption',
+        tags: ['run this town', 'how about it']
+      });
+    
+    return getAgent()
+      .patch(`/api/v1/posts/${body.id}`)
+      .send({
+        userId: body.userId,
+        caption: 'thought it was cute, might delete later'
+      })
+      .then(res => expect(res.body).toEqual({
+        id: expect.any(String),
+        userId: body.userId,
+        photoUrl: expect.any(String),
+        caption: 'thought it was cute, might delete later',
+        tags: expect.any(Array),
+      }));
+  });
 });
 
 describe('tardygram auth routes', () => {
-  
-
   it('sign up a user via POST', async() => {
     const response = await request(app)
       .post('/api/v1/auth/signup')

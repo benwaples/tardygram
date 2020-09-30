@@ -11,6 +11,7 @@ CREATE TABLE users (
 CREATE TABLE grams (
   id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   user_id INT NOT NULL,
+  photo_url TEXT NOT NULL,
   caption TEXT NOT NULL,
   tags TEXT []
 );
