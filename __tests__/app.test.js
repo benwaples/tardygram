@@ -1,6 +1,7 @@
 require('../lib/data/data-helper');
 const request = require('supertest');
 const app = require('../lib/app');
+const Gram = require('../lib/models/gram');
 
 describe('tardygram post gram route', () => {
 
@@ -42,6 +43,13 @@ describe('tardygram post gram route', () => {
     return await request(app)
       .get('/api/v1/posts')
       .then(posts => expect(posts.body.length).toEqual(5));
+  });
+
+  it('should get a post by id via GET', async() => {
+    const firstPost = (await Gram.findAll())[0];
+    return request(app)
+      .get(`/api/v1/posts/${firstPost.id}`)
+      .then(res => expect(res.body).toEqual({ id: expect.any(String), caption: firstPost.caption, tags: firstPost.tags, username: expect.any(String) }));
   });
 });
 
