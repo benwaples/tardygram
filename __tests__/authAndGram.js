@@ -39,7 +39,7 @@ describe('tardygram post gram route', () => {
   it('should get all posts via GET', async() => {
     return await request(app)
       .get('/api/v1/posts')
-      .then(posts => expect(posts.body.length).toEqual(5));
+      .then(posts => expect(posts.body.length).toEqual(20));
   });
 
   it('should get a post by id via GET', async() => {
@@ -90,6 +90,12 @@ describe('tardygram post gram route', () => {
       .delete(`/api/v1/posts/${body.id}`)
       .send({ userId: body.userId })
       .then(res => expect(res.body).toEqual(body));
+  });
+
+  it('should get the 10 most popular posts with most comments via GET', async() => {
+    return await request(app)
+      .get('/api/v1/posts/popular')
+      .then(res => expect(res.body.length).toEqual(10));
   });
 });
 
