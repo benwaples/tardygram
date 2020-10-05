@@ -30,6 +30,7 @@ describe('Comment Routes', () => {
   it('should delete a comment by id via DELETE', async() => {
     const firstComment = (await Comment.findAll())[0];
     return await getAgent()
-      .delete('/api/v1/comments/');
+      .delete(`/api/v1/comments/${firstComment.id}`)
+      .then(res => expect(res.body).toEqual(firstComment));
   });
 });
