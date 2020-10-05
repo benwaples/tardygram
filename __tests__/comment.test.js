@@ -19,6 +19,17 @@ describe('Comment Routes', () => {
         postId: 1,
         comment: 'a whole bunch of stuff'
       }));
+  });
 
+  it('should return all comments via GET', async() => {
+    return request(app)
+      .get('/api/v1/comments')
+      .then(res => expect(res.body.length).toEqual(100));
+  });
+
+  it('should delete a comment by id via DELETE', async() => {
+    const firstComment = (await Comment.findAll())[0];
+    return await getAgent()
+      .delete('/api/v1/comments/');
   });
 });
